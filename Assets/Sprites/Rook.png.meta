@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f3b09082882edbb4bbf6b81f55a25e42
+guid: 29e3bbafe0649d949bf85761b1cb1427
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1379780806020190625
-    second: Bishop_0
+      213: 6402892968040458680
+    second: Rook_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bishop_0
+      name: Rook_0
       rect:
         serializedVersion: 2
-        x: 259
-        y: 81
-        width: 491
-        height: 870
+        x: 239
+        y: 57
+        width: 707
+        height: 856
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1a15cba2557f52310800000000000000
-      internalID: 1379780806020190625
+      spriteID: 8b9e5eefa35abd850800000000000000
+      internalID: 6402892968040458680
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bishop_0: 1379780806020190625
+      Rook_0: 6402892968040458680
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
