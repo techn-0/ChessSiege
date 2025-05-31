@@ -179,7 +179,7 @@ MonoBehaviour:
   cost: 30
   spawnCooldown: 15
   attackCooldown: 5
-  maxHealth: 100
+  maxHealth: 60
   currentHealth: 0
   moveSpeed: 0.5
   attackRange: 3
