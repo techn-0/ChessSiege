@@ -110,8 +110,11 @@ public class BaseUnit : MonoBehaviour
 
     protected virtual void HandleMove()
     {
-        // 횡스크롤 단일 방향(오른쪽) 예시
-        Vector3 moveDir = Vector3.right;
+        Vector3 moveDir = Vector3.right; // 기본: 오른쪽(플레이어 유닛)
+        // 적 유닛이면 왼쪽으로 이동
+        if (gameObject.layer == LayerMask.NameToLayer("EnemyUnit"))
+            moveDir = Vector3.left;
+
         transform.Translate(moveDir * moveSpeed * Time.deltaTime);
     }
 
