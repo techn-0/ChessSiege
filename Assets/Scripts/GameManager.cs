@@ -112,12 +112,4 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion
-
-    // (옵션) 디버그용: Editor 또는 UI에서 실시간으로 자원 값을 확인하고 싶을 때 사용
-    void OnGUI()
-    {
-        // 화면 좌측 상단에 자원 수치 출력
-        GUI.Label(new Rect(10, 10, 200, 20), $"Player Resources: {playerResources}");
-        GUI.Label(new Rect(10, 30, 200, 20), $"Enemy Resources: {enemyResources}");
-    }
 }

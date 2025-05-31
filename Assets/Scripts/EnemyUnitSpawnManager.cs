@@ -18,6 +18,9 @@ public class EnemyUnitSpawnManager : MonoBehaviour
 
     private float[] lastSpawnTimes;
 
+    private float autoSpawnTimer = 0f;
+    public float autoSpawnInterval = 5f; // 자동 소환 간격(초)
+
     private void Awake()
     {
         if (enemyUnitDataList != null && enemyUnitDataList.Count > 0)
@@ -73,9 +76,42 @@ public class EnemyUnitSpawnManager : MonoBehaviour
     // 예: 테스트용으로 Update에서 1번만 호출
     void Update()
     {
+        // 자동 소환
+        autoSpawnTimer += Time.deltaTime;
+        if (autoSpawnTimer >= autoSpawnInterval)
+        {
+            autoSpawnTimer = 0f;
+            SpawnRandomEnemyUnit();
+        }
+
+        // 테스트용 수동 소환
         if (Input.GetKeyDown(KeyCode.P))
         {
             SpawnEnemyUnitByIndex(0);
         }
+    }
+
+    // 예시: 확률 가중치 배열
+    float[] spawnWeights = { 0.6f, 0.3f, 0.1f }; // 약한/중간/강한 유닛
+
+    int GetRandomIndexByWeight(float[] weights)
+    {
+        float total = 0;
+        foreach (var w in weights) total += w;
+        float rand = Random.Range(0, total);
+        float sum = 0;
+        for (int i = 0; i < weights.Length; i++)
+        {
+            sum += weights[i];
+            if (rand < sum) return i;
+        }
+        return weights.Length - 1;
+    }
+
+    // 사용 예시
+    void SpawnRandomEnemyUnit()
+    {
+        int index = GetRandomIndexByWeight(spawnWeights);
+        SpawnEnemyUnitByIndex(index);
     }
 }
