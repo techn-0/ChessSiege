@@ -38,10 +38,19 @@ public class BaseUnit : MonoBehaviour
     protected UnitState currentState = UnitState.Move;
     protected Transform targetBase;       
 
+    [Header("------ 사운드 설정(Sound) ------")]
+    public AudioClip attackClip; // 공격 사운드
+    private AudioSource audioSource;
+
     protected virtual void Awake()
     {
         currentHealth = maxHealth;
         lastAttackTime = -Mathf.Infinity;
+
+        // AudioSource 자동 추가 또는 가져오기
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
 
         // enemyBaseTag에 지정된 태그를 가진 첫 번째 오브젝트를 찾는다.
         GameObject baseObj = GameObject.FindGameObjectWithTag(enemyBaseTag);
@@ -173,6 +182,10 @@ public class BaseUnit : MonoBehaviour
                     }
                 }
             }
+
+            // 공격 사운드 재생
+            if (attackClip != null && audioSource != null)
+                audioSource.PlayOneShot(attackClip);
         }
 
         lastAttackTime = Time.time;
