@@ -1,38 +1,54 @@
 using UnityEngine;
 
+// 유닛의 상태
 public enum UnitState
 {
-    Idle,       // 대기 상태 (필요 시)
-    Move,       // 전진 중
-    Attack      // 공격 중
+    Idle,   // 대기
+    Move,   // 전진
+    Attack  // 공격
 }
 
 public class BaseUnit : MonoBehaviour
 {
-    [Header("Unit Attributes")]
-    public int cost = 1;                // 스폰 코스트 (spawn cost)
-    public int maxHealth = 100;         // 최대 체력 (max health)
-    [SerializeField] private int currentHealth; // 현재 체력 (current health)
+    [Header("------ 미니언 정보(Minion Info) ------")]
+    public string minionName = "Minion";
+    public int cost = 1;                // 소환 비용
+    public float spawnCooldown = 1.0f;  // 소환 쿨타임
+    public float attackCooldown = 1.0f; // 공격 쿨타임
 
-    public float moveSpeed = 2f;        // 이동속도 (movement speed)
-    public float attackRange = 1.5f;    // 사거리 (attack range)
-    public int damage = 10;             // 공격력 (damage) ← 추가
+    [Header("------ 유닛 속성(Attributes) ------")]
+    public int maxHealth = 100;         // 최대 체력
+    [SerializeField] private int currentHealth;
 
-    [Header("Attack Settings")]
-    public float attackCooldown = 1.0f; // 공격 쿨타임 (attack cooldown)
-    private float lastAttackTime;       // 마지막 공격 시각 (time of last attack)
+    public float moveSpeed = 2f;        // 이동 속도
+    public float attackRange = 1.5f;    // 사거리
+    public int damage = 10;             // 공격력
 
-    protected UnitState currentState = UnitState.Move;  // 초기 상태: 전진
-    protected Transform targetBase;   // 적 기지 위치 (target base)
+    private float lastAttackTime;
+
+    [Header("---- 적(Enemy) 탐지용 설정 ----")]
+    [Tooltip("이 유닛이 공격할 대상(적) 레이어를 에디터에서 Drag & Drop 또는 레이어 이름으로 설정하세요.")]
+    public LayerMask enemyLayerMask;    // ▶ 공격 대상을 찾기 위한 LayerMask
+
+    [Tooltip("이 유닛이 공격할 적 기지(Enemy Base) 오브젝트의 태그를 지정하세요.")]
+    public string enemyBaseTag = "EnemyBase"; 
+    // 플레이어 유닛은 적 기지를 'EnemyBase' 태그로 달아 놓고, 
+    // 적 유닛은 'PlayerBase' 태그로 달아 둔다고 가정
+
+    protected UnitState currentState = UnitState.Move;
+    protected Transform targetBase;       
 
     protected virtual void Awake()
     {
         currentHealth = maxHealth;
         lastAttackTime = -Mathf.Infinity;
-        // 적 기지(Enemy Base)는 미리 씬에 배치해 두고, 태그 등을 통해 참조합니다.
-        GameObject baseObj = GameObject.FindGameObjectWithTag("EnemyBase");
+
+        // enemyBaseTag에 지정된 태그를 가진 첫 번째 오브젝트를 찾는다.
+        GameObject baseObj = GameObject.FindGameObjectWithTag(enemyBaseTag);
         if (baseObj != null)
             targetBase = baseObj.transform;
+        else
+            Debug.LogWarning($"[{name}] Awake(): 태그 '{enemyBaseTag}'인 기지를 찾을 수 없습니다.");
     }
 
     protected virtual void Update()
@@ -48,39 +64,34 @@ public class BaseUnit : MonoBehaviour
                 DetectAndSwitchState();
                 break;
             case UnitState.Idle:
-                // 필요 시 구현
+                // 필요하다면 추가 구현
                 break;
         }
     }
 
-    // 피해를 입힐 때 호출 (예: 다른 스크립트에서)
-    public virtual void TakeDamage(int damage)
+    public virtual void TakeDamage(int dmg)
     {
-        currentHealth -= damage;
+        currentHealth -= dmg;
         if (currentHealth <= 0)
             Die();
     }
 
     protected virtual void Die()
     {
-        // 현재는 단순히 Destroy, 애니메이션 후 파괴 등으로 확장 가능
         Destroy(gameObject);
     }
 
     #region 상태 전환 및 감지 처리
 
-    // 적(Unit) 또는 적 기지를 사거리(attackRange) 내에서 감지하여 상태 전환
     protected virtual void DetectAndSwitchState()
     {
-        // 범위 내에 EnemyUnit 레이어에 속한 오브젝트가 있는지 검사
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, LayerMask.GetMask("EnemyUnit"));
+        // 1) 적(Unit) 혹은 적(Base)을 attackRange 내에서 검사한다.
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, enemyLayerMask);
         if (hit != null)
         {
             currentState = UnitState.Attack;
             return;
         }
-
-        // 사거리 내 적이 없으면 전진 상태 유지
         currentState = UnitState.Move;
     }
 
@@ -88,9 +99,9 @@ public class BaseUnit : MonoBehaviour
 
     #region 이동 처리
 
-    // 횡스크롤 게임이므로 단일 방향(예: 오른쪽)으로만 이동
     protected virtual void HandleMove()
     {
+        // 횡스크롤 단일 방향(오른쪽) 예시
         Vector3 moveDir = Vector3.right;
         transform.Translate(moveDir * moveSpeed * Time.deltaTime);
     }
@@ -99,23 +110,21 @@ public class BaseUnit : MonoBehaviour
 
     #region 공격 처리
 
-    // 공격(Attack) 처리 로직
     protected virtual void HandleAttack()
     {
-        // 공격 쿨타임 검사
+        // 공격 쿨타임 체크
         if (Time.time < lastAttackTime + attackCooldown)
-        {
             return;
-        }
 
-        // 사거리 내 EnemyUnit 레이어 오브젝트 중 가장 가까운 것 찾기
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange, LayerMask.GetMask("EnemyUnit"));
+        // 1) 공격 대상(적 유닛/적 기지)이 있는지 모두 가져온다.
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange, enemyLayerMask);
         if (hits.Length == 0)
         {
             currentState = UnitState.Move;
             return;
         }
 
+        // 2) 가장 가까운(거리 최소) 오브젝트를 찾아낸다.
         Collider2D nearest = null;
         float minDist = Mathf.Infinity;
         foreach (var col in hits)
@@ -128,24 +137,40 @@ public class BaseUnit : MonoBehaviour
             }
         }
 
+        // 3) nearest가 유닛인지(=BaseUnit) 확인하고, 없다면 기지(=enemyBaseTag)로 가정
         if (nearest != null)
         {
-            // 유닛이면 데미지
-            var targetUnit = nearest.GetComponent<BaseUnit>();
+            // 3-1) 유닛(BaseUnit)인 경우
+            BaseUnit targetUnit = nearest.GetComponent<BaseUnit>();
             if (targetUnit != null)
             {
                 targetUnit.TakeDamage(damage);
             }
             else
             {
-                // 성이면 데미지
-                var baseScript = nearest.GetComponent<EnemyBase>();
+                // 3-2) 유닛이 아닌(=기지) : enemyBaseTag로 태그된 오브젝트일 것이라 가정
+                GameObject obj = nearest.gameObject;
+
+                // EnemyBase 또는 PlayerBase 모두 체크
+                EnemyBase baseScript = obj.GetComponent<EnemyBase>();
                 if (baseScript == null)
-                    baseScript = nearest.GetComponentInParent<EnemyBase>();
+                    baseScript = obj.GetComponentInParent<EnemyBase>();
 
                 if (baseScript != null)
                 {
                     baseScript.TakeDamage(damage);
+                }
+                else
+                {
+                    // PlayerBase도 체크
+                    PlayerBase playerBaseScript = obj.GetComponent<PlayerBase>();
+                    if (playerBaseScript == null)
+                        playerBaseScript = obj.GetComponentInParent<PlayerBase>();
+
+                    if (playerBaseScript != null)
+                    {
+                        playerBaseScript.TakeDamage(damage);
+                    }
                 }
             }
         }
@@ -155,7 +180,7 @@ public class BaseUnit : MonoBehaviour
 
     #endregion
 
-    // 사거리 시각화(디버그용)
+    // 디버깅용 사거리 시각화
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

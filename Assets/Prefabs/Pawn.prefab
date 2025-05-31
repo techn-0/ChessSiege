@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6753608280682398035}
   - component: {fileID: 180546803976783512}
   - component: {fileID: 5425470635968728488}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pawn
   m_TagString: Minion
   m_Icon: {fileID: 0}
@@ -182,3 +182,7 @@ MonoBehaviour:
   attackRange: 1
   damage: 10
   attackCooldown: 1
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  enemyBaseTag: EnemyBase

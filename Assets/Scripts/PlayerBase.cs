@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class EnemyBase : MonoBehaviour
+public class PlayerBase : MonoBehaviour
 {
-    public string baseName = "EnemyBase";
+    public string baseName = "PlayerBase";
     public int maxHealth = 1000;
-    [SerializeField] private int currentHealth; // 인스펙터에서 확인 가능
+    [SerializeField] private int currentHealth;
 
     private void Awake()
     {
