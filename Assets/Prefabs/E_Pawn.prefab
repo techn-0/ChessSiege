@@ -183,7 +183,7 @@ MonoBehaviour:
   currentHealth: 0
   moveSpeed: -1
   attackRange: 1
-  damage: 100
+  damage: 10
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 64
