@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6753608280682398035}
   - component: {fileID: 180546803976783512}
   - component: {fileID: 5425470635968728488}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: E_Pawn
-  m_TagString: Minion
+  m_TagString: EnemyUnit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -177,12 +177,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minionName: Minion
   cost: 1
-  spawnCooldown: 1
-  attackCooldown: 1
+  spawnCooldown: 5
+  attackCooldown: 2
   maxHealth: 100
   currentHealth: 0
   moveSpeed: -1
-  attackRange: 1
+  attackRange: 0.5
   damage: 10
   enemyLayerMask:
     serializedVersion: 2

@@ -178,11 +178,11 @@ MonoBehaviour:
   minionName: Minion
   cost: 1
   spawnCooldown: 5
-  attackCooldown: 1
+  attackCooldown: 2
   maxHealth: 100
   currentHealth: 0
   moveSpeed: 1
-  attackRange: 1
+  attackRange: 0.5
   damage: 10
   enemyLayerMask:
     serializedVersion: 2
