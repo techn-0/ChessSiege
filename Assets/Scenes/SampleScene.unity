@@ -2180,7 +2180,7 @@ GameObject:
   - component: {fileID: 807980575}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: EnemyBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2830,9 +2830,10 @@ GameObject:
   - component: {fileID: 1833430675}
   - component: {fileID: 1833430674}
   - component: {fileID: 1833430673}
-  m_Layer: 0
-  m_Name: Base (1)
-  m_TagString: Untagged
+  - component: {fileID: 1833430676}
+  m_Layer: 7
+  m_Name: EnemyBase
+  m_TagString: EnemyBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2953,6 +2954,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &1833430676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833430672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719703603ece35142b2749fc4a9c9bf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 1000
+  currentHealth: 0
 --- !u!1 &1907780887
 GameObject:
   m_ObjectHideFlags: 0
@@ -3208,7 +3223,7 @@ Transform:
   m_GameObject: {fileID: 2046217179}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 257.70114, y: 132.8063, z: -1.4973278}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3218,6 +3233,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 2046217181}
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 212055338}
@@ -3225,4 +3241,3 @@ SceneRoots:
   - {fileID: 1833430675}
   - {fileID: 807980578}
   - {fileID: 1142361360}
-  - {fileID: 2046217181}

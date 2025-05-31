@@ -2,6 +2,15 @@ using UnityEngine;
 using UnityEngine.UI; // UI 컴포넌트 사용 시 필요
 using System.Collections.Generic;
 
+
+public class MinionData
+{
+    public string minionName;// 미니언 이름
+    public GameObject prefab;// 미니언 프리팹
+    public int cost;// 소환 비용
+    public float cooldown;// 소환 쿨타임
+}
+
 public class MinionSpawnManager : MonoBehaviour
 {
     [Header("미니언 프리팹 목록 (List of Minion Prefabs)")]

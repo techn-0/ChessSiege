@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 6644093089932036597}
   - component: {fileID: 6753608280682398035}
   - component: {fileID: 180546803976783512}
+  - component: {fileID: 5425470635968728488}
   m_Layer: 0
   m_Name: Pawn
-  m_TagString: Untagged
+  m_TagString: Minion
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -162,3 +163,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.5917969, y: 0.8730459}
   m_EdgeRadius: 0
+--- !u!114 &5425470635968728488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7723151713159525254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7566ec03f2affad47a236eb564c9c067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cost: 1
+  maxHealth: 100
+  currentHealth: 0
+  moveSpeed: 1
+  attackRange: 1
+  damage: 10
+  attackCooldown: 1
