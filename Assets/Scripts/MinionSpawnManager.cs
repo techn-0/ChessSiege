@@ -119,4 +119,11 @@ public class MinionSpawnManager : MonoBehaviour
 
         Debug.Log($"[MinionSpawnManager] 미니언 소환 성공: {unitInfo.minionName} (Index {index}) at {spawnPoint.position}");
     }
+
+    public float GetLastSpawnTime(int index)
+    {
+        if (lastSpawnTimes == null || index < 0 || index >= lastSpawnTimes.Length)
+            return -Mathf.Infinity;
+        return lastSpawnTimes[index];
+    }
 }

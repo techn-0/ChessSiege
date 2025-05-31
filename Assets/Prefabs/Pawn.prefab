@@ -177,7 +177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minionName: Minion
   cost: 1
-  spawnCooldown: 1
+  spawnCooldown: 5
   attackCooldown: 1
   maxHealth: 100
   currentHealth: 0
