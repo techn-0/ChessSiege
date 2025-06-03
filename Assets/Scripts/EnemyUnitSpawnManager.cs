@@ -13,13 +13,15 @@ public class EnemyUnitSpawnManager : MonoBehaviour
     [Tooltip("적 유닛 프리팹을 등록하세요.")]
     public List<EnemyUnitData> enemyUnitDataList = new List<EnemyUnitData>();
 
-    [Header("적 유닛 스폰 위치(보통 적 성 위치)")]
+    [Header("적 유닛 스폰 위치 (보통 적 성 위치)")]
     public Transform enemyBaseSpawnPoint;
 
     private float[] lastSpawnTimes;
-
     private float autoSpawnTimer = 0f;
     public float autoSpawnInterval = 5f; // 자동 소환 간격(초)
+
+    // 확률 가중치 배열 (약한/중간/강한 유닛)
+    float[] spawnWeights = { 0.6f, 0.3f, 0.1f };
 
     private void Awake()
     {
@@ -45,38 +47,67 @@ public class EnemyUnitSpawnManager : MonoBehaviour
         if (unitInfo == null)
             return;
 
-        // 쿨타임 체크
+        // (1) 쿨타임 체크
         float nextAvailableTime = lastSpawnTimes[index] + unitInfo.spawnCooldown;
         if (Time.time < nextAvailableTime)
+        {
+            float remain = nextAvailableTime - Time.time;
+            Debug.Log($"[EnemyUnitSpawnManager] {unitInfo.minionName} 은(는) 아직 쿨타임 중입니다. 남은 시간: {remain:F2}초");
             return;
+        }
 
-        // 적 자원 체크
-        if (!GameManager.Instance.TrySpendEnemyResources(unitInfo.cost))
+        // (2) 적 자원 체크 (업데이트된 기획서에 따라 세 가지 자원 비용 소비)
+        bool canSpend = GameManager.Instance.TrySpendEnemyResources(
+                                unitInfo.costGold, unitInfo.costWood, unitInfo.costFood);
+        if (!canSpend)
         {
             Debug.Log("적 자원 부족");
             return;
         }
 
-        // 스폰
+        // (3) 스폰
         GameObject newEnemy = Instantiate(prefab, enemyBaseSpawnPoint.position, Quaternion.identity);
-        newEnemy.name = prefab.name;
+        newEnemy.name = prefab.name; // "(Clone)" 접미사 제거
 
-        // 레이어 및 공격 대상 설정
+        // (4) 레이어 및 공격 대상 설정
         newEnemy.layer = LayerMask.NameToLayer("EnemyUnit");
         BaseUnit baseUnitComp = newEnemy.GetComponent<BaseUnit>();
         if (baseUnitComp != null)
         {
+            // 공격 대상은 "PlayerUnit" 레이어와 "PlayerBase" 태그를 가진 오브젝트로 설정
             baseUnitComp.enemyLayerMask = LayerMask.GetMask("PlayerUnit");
             baseUnitComp.enemyBaseTag = "PlayerBase";
         }
 
+        // (5) 마지막 스폰 시각 업데이트
         lastSpawnTimes[index] = Time.time;
     }
 
-    // 예: 테스트용으로 Update에서 1번만 호출
+    int GetRandomIndexByWeight(float[] weights)
+    {
+        float total = 0;
+        foreach (var w in weights)
+            total += w;
+        float rand = Random.Range(0, total);
+        float sum = 0;
+        for (int i = 0; i < weights.Length; i++)
+        {
+            sum += weights[i];
+            if (rand < sum)
+                return i;
+        }
+        return weights.Length - 1;
+    }
+
+    void SpawnRandomEnemyUnit()
+    {
+        int index = GetRandomIndexByWeight(spawnWeights);
+        SpawnEnemyUnitByIndex(index);
+    }
+
     void Update()
     {
-        // 자동 소환
+        // 자동 소환: 일정 시간마다 SpawnRandomEnemyUnit() 호출
         autoSpawnTimer += Time.deltaTime;
         if (autoSpawnTimer >= autoSpawnInterval)
         {
@@ -89,29 +120,5 @@ public class EnemyUnitSpawnManager : MonoBehaviour
         {
             SpawnEnemyUnitByIndex(0);
         }
-    }
-
-    // 예시: 확률 가중치 배열
-    float[] spawnWeights = { 0.6f, 0.3f, 0.1f }; // 약한/중간/강한 유닛
-
-    int GetRandomIndexByWeight(float[] weights)
-    {
-        float total = 0;
-        foreach (var w in weights) total += w;
-        float rand = Random.Range(0, total);
-        float sum = 0;
-        for (int i = 0; i < weights.Length; i++)
-        {
-            sum += weights[i];
-            if (rand < sum) return i;
-        }
-        return weights.Length - 1;
-    }
-
-    // 사용 예시
-    void SpawnRandomEnemyUnit()
-    {
-        int index = GetRandomIndexByWeight(spawnWeights);
-        SpawnEnemyUnitByIndex(index);
     }
 }

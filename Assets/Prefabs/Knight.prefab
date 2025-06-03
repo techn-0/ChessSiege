@@ -175,15 +175,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7566ec03f2affad47a236eb564c9c067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minionName: Minion
-  cost: 20
+  minionName: Kight
+  costGold: 200
+  costWood: 100
+  costFood: 50
   spawnCooldown: 10
   attackCooldown: 3
-  maxHealth: 150
+  maxHealth: 300
   currentHealth: 0
-  moveSpeed: 3
-  attackRange: 1.5
-  damage: 20
+  moveSpeed: 3.5
+  attackRange: 1
+  damage: 40
+  unitType: 2
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128

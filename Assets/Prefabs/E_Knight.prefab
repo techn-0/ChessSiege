@@ -176,7 +176,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minionName: Minion
-  cost: 20
+  costGold: 1
+  costWood: 1
+  costFood: 1
   spawnCooldown: 10
   attackCooldown: 3
   maxHealth: 150
@@ -184,6 +186,7 @@ MonoBehaviour:
   moveSpeed: 3
   attackRange: 1.5
   damage: 20
+  unitType: 2
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128

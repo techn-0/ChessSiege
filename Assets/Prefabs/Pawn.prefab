@@ -175,15 +175,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7566ec03f2affad47a236eb564c9c067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minionName: Minion
-  cost: 10
+  minionName: Pawn
+  costGold: 100
+  costWood: 50
+  costFood: 0
   spawnCooldown: 5
   attackCooldown: 2
-  maxHealth: 100
+  maxHealth: 200
   currentHealth: 0
-  moveSpeed: 1
-  attackRange: 0.5
-  damage: 10
+  moveSpeed: 2.5
+  attackRange: 1
+  damage: 30
+  unitType: 0
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128

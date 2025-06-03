@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-
 [System.Serializable]
 public class MinionData
 {
@@ -10,12 +9,12 @@ public class MinionData
 
 /// <summary>
 /// 플레이어가 버튼 클릭 등으로 “미니언(index)”을 소환할 때 사용하는 매니저.
-/// GameManager의 자원 시스템과 각 미니언의 코스트/쿨타임을 체크하여 인스턴스화.
+/// GameManager의 다중 자원(골드, 목재, 식량) 시스템과 각 미니언의 비용/쿨타임을 체크하여 인스턴스화.
 /// </summary>
 public class MinionSpawnManager : MonoBehaviour
 {
     [Header("미니언 데이터 목록")]
-    [Tooltip("순서대로 미니언 프리팹, 코스트, 쿨타임을 설정하세요.")]
+    [Tooltip("순서대로 미니언 프리팹, 비용(골드/목재/식량), 쿨타임을 설정하세요.")]
     public List<MinionData> minionDataList = new List<MinionData>();
 
     [Header("단일 스폰 지점 (Spawn Point)")]
@@ -73,11 +72,11 @@ public class MinionSpawnManager : MonoBehaviour
         BaseUnit unitInfo = prefab.GetComponent<BaseUnit>();
         if (unitInfo == null)
         {
-            Debug.LogWarning("프리팹에 BaseUnit이 없습니다.");
+            Debug.LogWarning("프리팹에 BaseUnit 컴포넌트가 없습니다.");
             return;
         }
 
-        // 2) 쿨타임(Time.time) 검사: 마지막 스폰 시각 + data.cooldown <= 현재 시간
+        // 2) 쿨타임(Time.time) 검사: 마지막 스폰 시각 + unitInfo.spawnCooldown <= 현재 시간
         float nextAvailableTime = lastSpawnTimes[index] + unitInfo.spawnCooldown;
         if (Time.time < nextAvailableTime)
         {
@@ -87,7 +86,8 @@ public class MinionSpawnManager : MonoBehaviour
         }
 
         // 3) GameManager를 통해 플레이어 자원 체크
-        bool canSpend = GameManager.Instance.TrySpendPlayerResources(unitInfo.cost);
+        // 업데이트된 기획서에 따라 유닛은 골드, 목재, 식량 비용을 소비하도록 함.
+        bool canSpend = GameManager.Instance.TrySpendPlayerResources(unitInfo.costGold, unitInfo.costWood, unitInfo.costFood);
         if (!canSpend)
         {
             Debug.Log("자원 부족");
@@ -102,10 +102,10 @@ public class MinionSpawnManager : MonoBehaviour
         BaseUnit baseUnitComp = newMinion.GetComponent<BaseUnit>();
         if (baseUnitComp != null)
         {
-            // → 미니언이 아군(플레이어 유닛)이므로, 유닛 레이어를 "PlayerUnit"으로 설정
+            // 미니언이 아군(플레이어 유닛)이므로, 유닛 레이어를 "PlayerUnit"으로 설정
             newMinion.layer = LayerMask.NameToLayer("PlayerUnit");
 
-            // → 공격 대상은 "EnemyUnit" 레이어와 "EnemyBase" 태그를 가진 오브젝트
+            // 공격 대상은 "EnemyUnit" 레이어와 "EnemyBase" 태그를 가진 오브젝트로 설정
             baseUnitComp.enemyLayerMask = LayerMask.GetMask("EnemyUnit");
             baseUnitComp.enemyBaseTag = "EnemyBase";
         }

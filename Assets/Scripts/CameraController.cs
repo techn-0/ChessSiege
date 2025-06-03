@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float panSpeed = 20f;                // 이동 속도
-    public Vector2 minMaxX = new Vector2(0, 50); // 카메라 이동 범위
+    public float panSpeed = 5000f;                // 이동 속도
+    public Vector2 minMaxX = new Vector2(-10, 40); // 카메라 이동 범위
 
     private Vector3 dragOrigin;
 

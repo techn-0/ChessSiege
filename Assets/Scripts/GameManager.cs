@@ -11,28 +11,48 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("---- 플레이어 자원(Settings) ----")]
-    [Tooltip("플레이어의 초기 자원(골드) 값")]
-    public int playerStartingResources = 0;
+    [Tooltip("플레이어의 초기 골드")]
+    public int playerStartingGold = 500;
+    [Tooltip("플레이어의 초기 목재")]
+    public int playerStartingWood = 300;
+    [Tooltip("플레이어의 초기 식량")]
+    public int playerStartingFood = 200;
     [Tooltip("플레이어 자원 최대치")]
-    public int playerMaxResources = 100;
+    public int playerMaxGold = 1000;
+    public int playerMaxWood = 500;
+    public int playerMaxFood = 400;
     [Tooltip("플레이어 자원 회복 속도 (초당)")]
-    public int playerRegenPerSecond = 1;
+    public int playerRegenGoldPerSecond = 1;
+    public int playerRegenWoodPerSecond = 1;
+    public int playerRegenFoodPerSecond = 1;
 
     [Header("---- 적 자원(Settings) ----")]
-    [Tooltip("적의 초기 자원(골드) 값")]
-    public int enemyStartingResources = 0;
+    [Tooltip("적의 초기 골드")]
+    public int enemyStartingGold = 500;
+    [Tooltip("적의 초기 목재")]
+    public int enemyStartingWood = 300;
+    [Tooltip("적의 초기 식량")]
+    public int enemyStartingFood = 200;
     [Tooltip("적 자원 최대치")]
-    public int enemyMaxResources = 100;
+    public int enemyMaxGold = 1000;
+    public int enemyMaxWood = 500;
+    public int enemyMaxFood = 400;
     [Tooltip("적 자원 회복 속도 (초당)")]
-    public int enemyRegenPerSecond = 1;
+    public int enemyRegenGoldPerSecond = 1;
+    public int enemyRegenWoodPerSecond = 1;
+    public int enemyRegenFoodPerSecond = 1;
 
     // 현재 자원 값 (런타임)
-    private int playerResources;
-    private int enemyResources;
+    private int playerGold, playerWood, playerFood;
+    private int enemyGold, enemyWood, enemyFood;
 
     // 외부에서 현재 자원 값을 볼 수 있도록 프로퍼티 제공
-    public int PlayerResources => playerResources;
-    public int EnemyResources => enemyResources;
+    public int PlayerGold => playerGold;
+    public int PlayerWood => playerWood;
+    public int PlayerFood => playerFood;
+    public int EnemyGold => enemyGold;
+    public int EnemyWood => enemyWood;
+    public int EnemyFood => enemyFood;
 
     void Awake()
     {
@@ -46,8 +66,12 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // 초기 자원 값 세팅
-        playerResources = playerStartingResources;
-        enemyResources = enemyStartingResources;
+        playerGold = playerStartingGold;
+        playerWood = playerStartingWood;
+        playerFood = playerStartingFood;
+        enemyGold = enemyStartingGold;
+        enemyWood = enemyStartingWood;
+        enemyFood = enemyStartingFood;
     }
 
     void Start()
@@ -64,7 +88,9 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-            playerResources = Mathf.Min(playerResources + playerRegenPerSecond, playerMaxResources);
+            playerGold = Mathf.Min(playerGold + playerRegenGoldPerSecond, playerMaxGold);
+            playerWood = Mathf.Min(playerWood + playerRegenWoodPerSecond, playerMaxWood);
+            playerFood = Mathf.Min(playerFood + playerRegenFoodPerSecond, playerMaxFood);
         }
     }
 
@@ -73,7 +99,9 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-            enemyResources = Mathf.Min(enemyResources + enemyRegenPerSecond, enemyMaxResources);
+            enemyGold = Mathf.Min(enemyGold + enemyRegenGoldPerSecond, enemyMaxGold);
+            enemyWood = Mathf.Min(enemyWood + enemyRegenWoodPerSecond, enemyMaxWood);
+            enemyFood = Mathf.Min(enemyFood + enemyRegenFoodPerSecond, enemyMaxFood);
         }
     }
 
@@ -85,12 +113,16 @@ public class GameManager : MonoBehaviour
     /// 플레이어가 유닛을 스폰하기 위해 자원을 소비 시도.
     /// 성공하면 해당 코스트만큼 차감하고 true 반환, 부족하면 false 반환.
     /// </summary>
-    /// <param name="cost">소비할 자원량</param>
-    public bool TrySpendPlayerResources(int cost)
+    /// <param name="goldCost">소비할 골드 자원량</param>
+    /// <param name="woodCost">소비할 목재 자원량</param>
+    /// <param name="foodCost">소비할 식량 자원량</param>
+    public bool TrySpendPlayerResources(int goldCost, int woodCost, int foodCost)
     {
-        if (playerResources >= cost)
+        if (playerGold >= goldCost && playerWood >= woodCost && playerFood >= foodCost)
         {
-            playerResources -= cost;
+            playerGold -= goldCost;
+            playerWood -= woodCost;
+            playerFood -= foodCost;
             return true;
         }
         return false;
@@ -100,12 +132,16 @@ public class GameManager : MonoBehaviour
     /// 적이 유닛을 스폰하기 위해 자원을 소비 시도.
     /// 성공하면 해당 코스트만큼 차감하고 true 반환, 부족하면 false 반환.
     /// </summary>
-    /// <param name="cost">소비할 자원량</param>
-    public bool TrySpendEnemyResources(int cost)
+    /// <param name="goldCost">소비할 골드 자원량</param>
+    /// <param name="woodCost">소비할 목재 자원량</param>
+    /// <param name="foodCost">소비할 식량 자원량</param>
+    public bool TrySpendEnemyResources(int goldCost, int woodCost, int foodCost)
     {
-        if (enemyResources >= cost)
+        if (enemyGold >= goldCost && enemyWood >= woodCost && enemyFood >= foodCost)
         {
-            enemyResources -= cost;
+            enemyGold -= goldCost;
+            enemyWood -= woodCost;
+            enemyFood -= foodCost;
             return true;
         }
         return false;
