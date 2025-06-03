@@ -4557,8 +4557,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minionDataList:
   - prefab: {fileID: 7723151713159525254, guid: 3e98f7f80578b1c429c4c39b269d9022, type: 3}
+    attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
   - prefab: {fileID: 7390875639610478648, guid: 157aeef7d04e9484b83b764c845df5a0, type: 3}
+    attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
   - prefab: {fileID: 6112045095819920, guid: efa9900c7a42d0f44bbb5896b90953f8, type: 3}
+    attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
   spawnPoint: {fileID: 1313161694}
 --- !u!4 &2046217181
 Transform:
@@ -4589,8 +4592,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyUnitDataList:
   - prefab: {fileID: 7723151713159525254, guid: 32cb2133055d63d4fb75884b778fe6f4, type: 3}
+    attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
   - prefab: {fileID: 7390875639610478648, guid: d28b78c5a8b570345bf6583f391f4065, type: 3}
+    attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
   - prefab: {fileID: 6112045095819920, guid: 614c0a089557fd74a8a07c723d3e8570, type: 3}
+    attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
   enemyBaseSpawnPoint: {fileID: 1836472396}
   autoSpawnInterval: 5
 --- !u!1001 &3561986835269173501

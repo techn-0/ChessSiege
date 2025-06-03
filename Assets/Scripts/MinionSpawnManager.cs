@@ -4,13 +4,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class MinionData
 {
-    public GameObject prefab; // BaseUnit이 붙은 프리팹만 할당
+    public GameObject prefab; // BaseUnit이 붙은 프리팹만 할당 (프리팹 내부에 attackClip 등이 설정되어 있음)
 }
 
-/// <summary>
-/// 플레이어가 버튼 클릭 등으로 “미니언(index)”을 소환할 때 사용하는 매니저.
-/// GameManager의 다중 자원(골드, 목재, 식량) 시스템과 각 미니언의 비용/쿨타임을 체크하여 인스턴스화.
-/// </summary>
 public class MinionSpawnManager : MonoBehaviour
 {
     [Header("미니언 데이터 목록")]
@@ -26,11 +22,9 @@ public class MinionSpawnManager : MonoBehaviour
 
     private void Awake()
     {
-        // minionDataList 개수만큼 lastSpawnTimes 배열 초기화
         if (minionDataList != null && minionDataList.Count > 0)
         {
             lastSpawnTimes = new float[minionDataList.Count];
-            // 초기값을 음수 무한대로 설정하여, 처음엔 쿨타임 체크가 항상 통과하도록 함
             for (int i = 0; i < lastSpawnTimes.Length; i++)
             {
                 lastSpawnTimes[i] = -Mathf.Infinity;
@@ -41,7 +35,6 @@ public class MinionSpawnManager : MonoBehaviour
             Debug.LogWarning("[MinionSpawnManager] 미니언 데이터 리스트(minionDataList)가 비어 있거나 할당되지 않았습니다.");
         }
 
-        // spawnPoint가 할당되지 않았다면 경고
         if (spawnPoint == null)
         {
             Debug.LogWarning("[MinionSpawnManager] spawnPoint가 할당되지 않았습니다.");
@@ -55,7 +48,6 @@ public class MinionSpawnManager : MonoBehaviour
     /// <param name="index">0부터 시작하는 인덱스</param>
     public void SpawnMinionByIndex(int index)
     {
-        // 1) 인덱스 유효 범위 검사
         if (minionDataList == null || index < 0 || index >= minionDataList.Count)
         {
             Debug.LogWarning($"[MinionSpawnManager] SpawnMinionByIndex: 인덱스 {index}가 범위를 벗어났습니다.");
@@ -76,7 +68,6 @@ public class MinionSpawnManager : MonoBehaviour
             return;
         }
 
-        // 2) 쿨타임(Time.time) 검사: 마지막 스폰 시각 + unitInfo.spawnCooldown <= 현재 시간
         float nextAvailableTime = lastSpawnTimes[index] + unitInfo.spawnCooldown;
         if (Time.time < nextAvailableTime)
         {
@@ -85,8 +76,6 @@ public class MinionSpawnManager : MonoBehaviour
             return;
         }
 
-        // 3) GameManager를 통해 플레이어 자원 체크
-        // 업데이트된 기획서에 따라 유닛은 골드, 목재, 식량 비용을 소비하도록 함.
         bool canSpend = GameManager.Instance.TrySpendPlayerResources(unitInfo.costGold, unitInfo.costWood, unitInfo.costFood);
         if (!canSpend)
         {
@@ -94,23 +83,21 @@ public class MinionSpawnManager : MonoBehaviour
             return;
         }
 
-        // 실제 미니언 Instantiate
+        // 프리팹 Instantiate (프리팹 내부에 이미 attackClip, AudioSource가 설정되어 있음)
         GameObject newMinion = Instantiate(prefab, spawnPoint.position, Quaternion.identity);
         newMinion.name = prefab.name; // "(Clone)" 접미사 제거
-
 
         BaseUnit baseUnitComp = newMinion.GetComponent<BaseUnit>();
         if (baseUnitComp != null)
         {
-            // 만약 추가 설정이 필요하다면 태그 기반으로 처리
-            // 예: baseUnitComp.enemyBaseTag = "EnemyBase";
+            // 필요한 경우 적 기지 태그만 재설정 (사운드 관련 설정은 프리팹 Inspector 그대로 사용)
+            baseUnitComp.enemyBaseTag = "EnemyBase";
         }
         else
         {
             Debug.LogWarning($"[MinionSpawnManager] 소환된 Prefab({prefab.name})에 BaseUnit 컴포넌트가 없습니다.");
         }
 
-        // 마지막 스폰 시각 업데이트
         lastSpawnTimes[index] = Time.time;
 
         Debug.Log($"[MinionSpawnManager] 미니언 소환 성공: {unitInfo.minionName} (Index {index}) at {spawnPoint.position}");

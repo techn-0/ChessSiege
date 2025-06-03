@@ -4,7 +4,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class EnemyUnitData
 {
-    public GameObject prefab; // BaseUnit이 붙은 적 유닛 프리팹만 할당
+    public GameObject prefab; // BaseUnit이 붙은 적 유닛 프리팹만 할당 (프리팹 내부에 attackClip 등이 설정되어 있음)
+    // 공격 사운드는 프리팹 Inspector에 설정한 값을 그대로 사용합니다.
+    // public AudioClip attackClip; // 불필요하므로 제거합니다.
 }
 
 public class EnemyUnitSpawnManager : MonoBehaviour
@@ -69,12 +71,16 @@ public class EnemyUnitSpawnManager : MonoBehaviour
         GameObject newEnemy = Instantiate(prefab, enemyBaseSpawnPoint.position, Quaternion.identity);
         newEnemy.name = prefab.name; // "(Clone)" 접미사 제거
 
-        // (4) 태그 기반으로 공격 대상 설정
+        // (4) 태그 기반으로 공격 대상 설정 (프리팹의 사운드 등은 Inspector에 설정된 그대로 사용)
         BaseUnit baseUnitComp = newEnemy.GetComponent<BaseUnit>();
         if (baseUnitComp != null)
         {
-            // 공격 대상은 "PlayerBase" 태그를 가진 오브젝트로 설정
-            baseUnitComp.enemyBaseTag = "PlayerBase";
+            // 필요 시, 적 기지 태그만 재설정합니다.
+            baseUnitComp.enemyBaseTag = "PlayerBase"; // 또는 "EnemyBase"
+        }
+        else
+        {
+            Debug.LogWarning($"[EnemyUnitSpawnManager] 소환된 Prefab({prefab.name})에 BaseUnit 컴포넌트가 없습니다.");
         }
 
         // (5) 마지막 스폰 시각 업데이트

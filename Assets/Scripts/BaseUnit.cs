@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-// 새 유닛 타입 열거형 추가 (기획서에 맞게 필요 시 수정)
 public enum UnitType
 {
     Infantry,  // 보병
@@ -20,7 +19,6 @@ public class BaseUnit : MonoBehaviour
 {
     [Header("------ 미니언 정보(Minion Info) ------")]
     public string minionName = "Minion";
-    // 기존 cost 필드는 제거하고, 다중 자원 비용으로 교체
     public int costGold = 1;
     public int costWood = 1;
     public int costFood = 1;
@@ -33,7 +31,7 @@ public class BaseUnit : MonoBehaviour
     public float moveSpeed = 2f;
     public float attackRange = 1.5f;
     public int damage = 10;
-    public UnitType unitType;  // 유닛 타입 (상성 처리를 위한)
+    public UnitType unitType;
 
     private float lastAttackTime;
 
@@ -52,11 +50,14 @@ public class BaseUnit : MonoBehaviour
         currentHealth = maxHealth;
         lastAttackTime = -Mathf.Infinity;
 
-        audioSource = GetComponent<AudioSource>()
-                      ?? gameObject.AddComponent<AudioSource>();
+        // 프리팹에 AudioSource가 이미 있으면 사용, 없으면 추가
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
 
-        // 공격 대상 기지(Transform) 설정만 하고,
-        // 물리 충돌 무시 처리는 Start()로 이동합니다.
+        // Awake() 시점에 Inspector에 설정된 attackClip 확인 (디버그 용)
+        Debug.Log($"[{name}] Awake(): attackClip={(attackClip != null ? attackClip.name : "null")}");
+
         GameObject targetObj = GameObject.FindGameObjectWithTag(enemyBaseTag);
         if (targetObj != null)
             targetBase = targetObj.transform;
@@ -71,7 +72,6 @@ public class BaseUnit : MonoBehaviour
 
     private IEnumerator ApplyCollisionIgnore()
     {
-        // EndOfFrame까지 대기하여 모든 기지가 완전히 초기화되도록 합니다.
         yield return new WaitForEndOfFrame();
 
         Collider2D unitCollider = GetComponent<Collider2D>();
@@ -81,10 +81,8 @@ public class BaseUnit : MonoBehaviour
             yield break;
         }
 
-        // 태그를 통해 자신의 기지 태그 결정
-        string ownBaseTag = CompareTag("PlayerUnit") ? "PlayerBase"
-                        : CompareTag("EnemyUnit")  ? "EnemyBase"
-                        : null;
+        string ownBaseTag = CompareTag("PlayerUnit") ? "PlayerBase" :
+                            CompareTag("EnemyUnit") ? "EnemyBase" : null;
         if (string.IsNullOrEmpty(ownBaseTag))
         {
             Debug.LogWarning($"[{name}] ApplyCollisionIgnore(): 유닛 태그가 PlayerUnit 또는 EnemyUnit이 아닙니다.");
@@ -178,10 +176,8 @@ public class BaseUnit : MonoBehaviour
     protected virtual void HandleMove()
     {
         Vector3 moveDir = Vector3.right;
-        // 태그로 적 유닛 판단
         if (CompareTag("EnemyUnit"))
             moveDir = Vector3.left;
-
         transform.Translate(moveDir * moveSpeed * Time.deltaTime);
     }
     #endregion
@@ -189,7 +185,10 @@ public class BaseUnit : MonoBehaviour
     #region 공격 처리
     protected virtual void HandleAttack()
     {
-        if (Time.time < lastAttackTime + attackCooldown) return;
+        if (Time.time < lastAttackTime + attackCooldown)
+            return;
+
+        Debug.Log($"[{name}] 공격 전: attackClip={(attackClip != null ? attackClip.name : "null")}, audioSource={(audioSource != null ? "존재함" : "null")}");
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
         if (hits.Length == 0)
@@ -202,7 +201,6 @@ public class BaseUnit : MonoBehaviour
         float minDist = Mathf.Infinity;
         foreach (var col in hits)
         {
-            // enemyBaseTag 변수로 기지 태그 검사
             bool isEnemy = CompareTag("PlayerUnit")
                            ? (col.CompareTag("EnemyUnit") || col.CompareTag(enemyBaseTag))
                            : (col.CompareTag("PlayerUnit") || col.CompareTag(enemyBaseTag));
@@ -226,7 +224,6 @@ public class BaseUnit : MonoBehaviour
             }
             else
             {
-                // 기지일 때는 enemyBaseTag로 구분된 태그에 맞춰 데미지 호출
                 var go = nearest.gameObject;
                 if (go.CompareTag(enemyBaseTag))
                 {
@@ -239,19 +236,18 @@ public class BaseUnit : MonoBehaviour
                 }
             }
 
+            // 공격 처리 부분, 사운드 재생 구조
             if (attackClip != null && audioSource != null)
+            {
                 audioSource.PlayOneShot(attackClip);
+            }
+            lastAttackTime = Time.time;
         }
-        lastAttackTime = Time.time;
     }
     #endregion
 
     protected float GetAdvantageMultiplier(BaseUnit target)
     {
-        // 예시 규칙:
-        // Infantry(보병) → Archer(궁병)에 대해 1.2배
-        // Archer(궁병) → Cavalry(기병)에 대해 1.2배
-        // Cavalry(기병) → Infantry(보병)에 대해 1.2배
         if (unitType == UnitType.Infantry && target.unitType == UnitType.Archer)
             return 1.2f;
         else if (unitType == UnitType.Archer && target.unitType == UnitType.Cavalry)
@@ -261,10 +257,11 @@ public class BaseUnit : MonoBehaviour
         return 1f;
     }
 
-    // 디버깅용 사거리 시각화
-    void OnDrawGizmosSelected()
+    protected virtual void OnEnable()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
+        }
     }
 }
