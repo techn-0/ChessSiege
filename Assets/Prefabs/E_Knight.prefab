@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4829880061632079323}
   - component: {fileID: 4786007675249085635}
   - component: {fileID: 8470178907472445697}
-  - component: {fileID: 1515543184039802268}
+  - component: {fileID: -4902362697680978301}
   m_Layer: 0
   m_Name: E_Knight
   m_TagString: EnemyUnit
@@ -163,7 +163,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.54398394, y: 0.77217513}
   m_EdgeRadius: 0
---- !u!114 &1515543184039802268
+--- !u!114 &-4902362697680978301
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,17 +175,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7566ec03f2affad47a236eb564c9c067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minionName: Minion
-  costGold: 1
-  costWood: 1
-  costFood: 1
+  minionName: Kight
+  costGold: 200
+  costWood: 100
+  costFood: 50
   spawnCooldown: 10
   attackCooldown: 3
-  maxHealth: 150
+  maxHealth: 300
   currentHealth: 0
-  moveSpeed: 3
-  attackRange: 1.5
-  damage: 20
+  moveSpeed: 3.5
+  attackRange: 1
+  damage: 40
   unitType: 2
   enemyBaseTag: PlayerBase
   attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}

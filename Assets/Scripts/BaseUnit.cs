@@ -264,4 +264,7 @@ public class BaseUnit : MonoBehaviour
             audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
         }
     }
+
+    public int CurrentHealth { get { return currentHealth; } }
+    public int MaxHealth { get { return maxHealth; } }
 }
