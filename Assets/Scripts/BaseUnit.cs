@@ -33,6 +33,8 @@ public class BaseUnit : MonoBehaviour
     public int damage = 10;
     public UnitType unitType;
 
+    public bool isRanged = false; // Inspector에서 설정
+
     private float lastAttackTime;
 
     [Tooltip("이 유닛이 공격할 적 기지(Enemy Base) 오브젝트의 태그를 지정하세요.")]
@@ -116,20 +118,8 @@ public class BaseUnit : MonoBehaviour
 
     protected virtual void Update()
     {
-        switch (currentState)
-        {
-            case UnitState.Move:
-                HandleMove();
-                DetectAndSwitchState();
-                break;
-            case UnitState.Attack:
-                HandleAttack();
-                DetectAndSwitchState();
-                break;
-            case UnitState.Idle:
-                // 필요 시 구현
-                break;
-        }
+        HandleMove();
+        HandleAttack();
     }
 
     public virtual void TakeDamage(int dmg)
@@ -147,6 +137,14 @@ public class BaseUnit : MonoBehaviour
     #region 상태 전환 및 감지 처리
     protected virtual void DetectAndSwitchState()
     {
+        if (isRanged)
+        {
+            // 원거리 유닛은 항상 Move 상태 유지
+            currentState = UnitState.Move;
+            return;
+        }
+
+        // 근접 유닛만 공격/이동 상태 전환
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
         bool foundTarget = false;
         foreach (Collider2D col in hits)
@@ -176,8 +174,36 @@ public class BaseUnit : MonoBehaviour
     protected virtual void HandleMove()
     {
         Vector3 moveDir = Vector3.right;
+        string allyTag = "PlayerUnit";
+        string baseTag = "PlayerBase";
+        string enemyTag = "EnemyUnit";
+        string enemyBaseTagLocal = enemyBaseTag;
+        float checkDistance = 0.7f;
+        Vector2 boxSize = new Vector2(0.6f, 0.8f);
+
         if (CompareTag("EnemyUnit"))
+        {
             moveDir = Vector3.left;
+            allyTag = "EnemyUnit";
+            baseTag = "EnemyBase";
+            enemyTag = "PlayerUnit";
+            enemyBaseTagLocal = "PlayerBase";
+        }
+
+        Vector2 boxCenter = (Vector2)transform.position + (Vector2)moveDir * (checkDistance * 0.5f);
+        Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, LayerMask.GetMask("Default"));
+        foreach (var col in hits)
+        {
+            if (col.gameObject == gameObject) continue;
+            // 앞에 아군 유닛이 있으면 멈춤
+            if (col.CompareTag(allyTag) && !col.CompareTag(baseTag))
+                return;
+            // 앞에 적 유닛이나 적 기지가 있으면 멈춤
+            if (col.CompareTag(enemyTag) || col.CompareTag(enemyBaseTagLocal))
+                return;
+        }
+
+        // 이동
         transform.Translate(moveDir * moveSpeed * Time.deltaTime);
     }
     #endregion
@@ -267,4 +293,20 @@ public class BaseUnit : MonoBehaviour
 
     public int CurrentHealth { get { return currentHealth; } }
     public int MaxHealth { get { return maxHealth; } }
+
+    // 디버깅용 기즈모(씬에서 감지 영역 확인)
+    void OnDrawGizmosSelected()
+    {
+        // 이동 감지 영역(노란색)
+        Vector3 moveDir = CompareTag("EnemyUnit") ? Vector3.left : Vector3.right;
+        float checkDistance = 0.7f;
+        Vector2 boxSize = new Vector2(0.6f, 0.8f);
+        Vector2 boxCenter = (Vector2)transform.position + (Vector2)moveDir * (checkDistance * 0.5f);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(boxCenter, boxSize);
+
+        // 공격 사거리(빨간색)
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
 }

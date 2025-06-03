@@ -189,6 +189,7 @@ MonoBehaviour:
   attackRange: 5
   damage: 25
   unitType: 1
+  isRanged: 1
   enemyBaseTag: EnemyBase
   attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
 --- !u!114 &6934683136006137936
