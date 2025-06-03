@@ -4,10 +4,10 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Minion
   - EnemyBase
   - EnemyUnit
   - PlayerBase
+  - PlayerUnit
   layers:
   - Default
   - TransparentFX
@@ -15,8 +15,8 @@ TagManager:
   - 
   - Water
   - UI
-  - PlayerUnit
-  - EnemyUnit
+  - 
+  - 
   - 
   - 
   - 

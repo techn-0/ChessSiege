@@ -94,27 +94,23 @@ public class MinionSpawnManager : MonoBehaviour
             return;
         }
 
-        // 4) 실제 미니언 Instantiate
+        // 실제 미니언 Instantiate
         GameObject newMinion = Instantiate(prefab, spawnPoint.position, Quaternion.identity);
         newMinion.name = prefab.name; // "(Clone)" 접미사 제거
 
-        // 5) 생성된 미니언에 레이어/BaseUnit 세팅
+
         BaseUnit baseUnitComp = newMinion.GetComponent<BaseUnit>();
         if (baseUnitComp != null)
         {
-            // 미니언이 아군(플레이어 유닛)이므로, 유닛 레이어를 "PlayerUnit"으로 설정
-            newMinion.layer = LayerMask.NameToLayer("PlayerUnit");
-
-            // 공격 대상은 "EnemyUnit" 레이어와 "EnemyBase" 태그를 가진 오브젝트로 설정
-            baseUnitComp.enemyLayerMask = LayerMask.GetMask("EnemyUnit");
-            baseUnitComp.enemyBaseTag = "EnemyBase";
+            // 만약 추가 설정이 필요하다면 태그 기반으로 처리
+            // 예: baseUnitComp.enemyBaseTag = "EnemyBase";
         }
         else
         {
             Debug.LogWarning($"[MinionSpawnManager] 소환된 Prefab({prefab.name})에 BaseUnit 컴포넌트가 없습니다.");
         }
 
-        // 6) 마지막 스폰 시각 업데이트
+        // 마지막 스폰 시각 업데이트
         lastSpawnTimes[index] = Time.time;
 
         Debug.Log($"[MinionSpawnManager] 미니언 소환 성공: {unitInfo.minionName} (Index {index}) at {spawnPoint.position}");

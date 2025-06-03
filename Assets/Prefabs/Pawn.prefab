@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6753608280682398035}
   - component: {fileID: 180546803976783512}
   - component: {fileID: 5425470635968728488}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Pawn
-  m_TagString: Minion
+  m_TagString: PlayerUnit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 7723151713159525254}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.792942, y: 0.8599378, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -187,8 +187,5 @@ MonoBehaviour:
   attackRange: 1
   damage: 30
   unitType: 0
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
   enemyBaseTag: EnemyBase
   attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}

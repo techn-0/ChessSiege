@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 // 새 유닛 타입 열거형 추가 (기획서에 맞게 필요 시 수정)
 public enum UnitType
@@ -36,11 +37,8 @@ public class BaseUnit : MonoBehaviour
 
     private float lastAttackTime;
 
-    [Header("---- 적(Enemy) 탐지용 설정 ----")]
-    [Tooltip("이 유닛이 공격할 대상(적) 레이어를 설정하세요.")]
-    public LayerMask enemyLayerMask;
     [Tooltip("이 유닛이 공격할 적 기지(Enemy Base) 오브젝트의 태그를 지정하세요.")]
-    public string enemyBaseTag = "EnemyBase";
+    public string enemyBaseTag;
 
     protected UnitState currentState = UnitState.Move;
     protected Transform targetBase;
@@ -54,15 +52,68 @@ public class BaseUnit : MonoBehaviour
         currentHealth = maxHealth;
         lastAttackTime = -Mathf.Infinity;
 
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>()
+                      ?? gameObject.AddComponent<AudioSource>();
 
-        GameObject baseObj = GameObject.FindGameObjectWithTag(enemyBaseTag);
-        if (baseObj != null)
-            targetBase = baseObj.transform;
+        // 공격 대상 기지(Transform) 설정만 하고,
+        // 물리 충돌 무시 처리는 Start()로 이동합니다.
+        GameObject targetObj = GameObject.FindGameObjectWithTag(enemyBaseTag);
+        if (targetObj != null)
+            targetBase = targetObj.transform;
         else
             Debug.LogWarning($"[{name}] Awake(): 태그 '{enemyBaseTag}'인 기지를 찾을 수 없습니다.");
+    }
+
+    protected virtual void Start()
+    {
+        StartCoroutine(ApplyCollisionIgnore());
+    }
+
+    private IEnumerator ApplyCollisionIgnore()
+    {
+        // EndOfFrame까지 대기하여 모든 기지가 완전히 초기화되도록 합니다.
+        yield return new WaitForEndOfFrame();
+
+        Collider2D unitCollider = GetComponent<Collider2D>();
+        if (unitCollider == null)
+        {
+            Debug.LogWarning($"[{name}] ApplyCollisionIgnore(): 유닛에 Collider2D가 없습니다.");
+            yield break;
+        }
+
+        // 태그를 통해 자신의 기지 태그 결정
+        string ownBaseTag = CompareTag("PlayerUnit") ? "PlayerBase"
+                        : CompareTag("EnemyUnit")  ? "EnemyBase"
+                        : null;
+        if (string.IsNullOrEmpty(ownBaseTag))
+        {
+            Debug.LogWarning($"[{name}] ApplyCollisionIgnore(): 유닛 태그가 PlayerUnit 또는 EnemyUnit이 아닙니다.");
+            yield break;
+        }
+        Debug.Log($"[{name}] 자신의 기지 태그는 {ownBaseTag}");
+
+        GameObject ownBase = GameObject.FindGameObjectWithTag(ownBaseTag);
+        if (ownBase == null)
+        {
+            Debug.LogWarning($"[{name}] ApplyCollisionIgnore(): '{ownBaseTag}' 오브젝트를 찾을 수 없습니다.");
+            yield break;
+        }
+        Debug.Log($"[{name}] 발견된 기지 오브젝트: {ownBase.name}");
+
+        Collider2D[] baseColliders = ownBase.GetComponentsInChildren<Collider2D>();
+        if (baseColliders.Length == 0)
+        {
+            Debug.LogWarning($"[{name}] ApplyCollisionIgnore(): '{ownBaseTag}'에 Collider2D가 없습니다.");
+        }
+        else
+        {
+            Debug.Log($"[{name}] '{ownBaseTag}'에 포함된 Collider 수: {baseColliders.Length}");
+            foreach (var baseCol in baseColliders)
+            {
+                Debug.Log($"[{name}] 무시할 대상 Collider: {baseCol.name}");
+                Physics2D.IgnoreCollision(unitCollider, baseCol);
+            }
+        }
     }
 
     protected virtual void Update()
@@ -96,25 +147,39 @@ public class BaseUnit : MonoBehaviour
     }
 
     #region 상태 전환 및 감지 처리
-
     protected virtual void DetectAndSwitchState()
     {
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, enemyLayerMask);
-        if (hit != null)
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
+        bool foundTarget = false;
+        foreach (Collider2D col in hits)
         {
-            currentState = UnitState.Attack;
-            return;
+            if (CompareTag("PlayerUnit"))
+            {
+                if (col.CompareTag("EnemyUnit") || col.CompareTag(enemyBaseTag))
+                {
+                    foundTarget = true;
+                    break;
+                }
+            }
+            else if (CompareTag("EnemyUnit"))
+            {
+                if (col.CompareTag("PlayerUnit") || col.CompareTag(enemyBaseTag))
+                {
+                    foundTarget = true;
+                    break;
+                }
+            }
         }
-        currentState = UnitState.Move;
+        currentState = foundTarget ? UnitState.Attack : UnitState.Move;
     }
     #endregion
 
     #region 이동 처리
-
     protected virtual void HandleMove()
     {
         Vector3 moveDir = Vector3.right;
-        if (gameObject.layer == LayerMask.NameToLayer("EnemyUnit"))
+        // 태그로 적 유닛 판단
+        if (CompareTag("EnemyUnit"))
             moveDir = Vector3.left;
 
         transform.Translate(moveDir * moveSpeed * Time.deltaTime);
@@ -122,13 +187,11 @@ public class BaseUnit : MonoBehaviour
     #endregion
 
     #region 공격 처리
-
     protected virtual void HandleAttack()
     {
-        if (Time.time < lastAttackTime + attackCooldown)
-            return;
+        if (Time.time < lastAttackTime + attackCooldown) return;
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange, enemyLayerMask);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
         if (hits.Length == 0)
         {
             currentState = UnitState.Move;
@@ -139,56 +202,56 @@ public class BaseUnit : MonoBehaviour
         float minDist = Mathf.Infinity;
         foreach (var col in hits)
         {
-            float dist = Vector2.Distance(transform.position, col.transform.position);
-            if (dist < minDist)
+            // enemyBaseTag 변수로 기지 태그 검사
+            bool isEnemy = CompareTag("PlayerUnit")
+                           ? (col.CompareTag("EnemyUnit") || col.CompareTag(enemyBaseTag))
+                           : (col.CompareTag("PlayerUnit") || col.CompareTag(enemyBaseTag));
+            if (!isEnemy) continue;
+
+            float d = Vector2.Distance(transform.position, col.transform.position);
+            if (d < minDist)
             {
-                minDist = dist;
+                minDist = d;
                 nearest = col;
             }
         }
 
         if (nearest != null)
         {
-            // 만약 공격 대상이 BaseUnit 인 경우 상성 배수를 적용한다.
-            BaseUnit targetUnit = nearest.GetComponent<BaseUnit>();
-            if (targetUnit != null)
+            BaseUnit tu = nearest.GetComponent<BaseUnit>();
+            if (tu != null)
             {
-                float multiplier = GetAdvantageMultiplier(targetUnit);
-                targetUnit.TakeDamage(Mathf.RoundToInt(damage * multiplier));
+                float mul = GetAdvantageMultiplier(tu);
+                tu.TakeDamage(Mathf.RoundToInt(damage * mul));
             }
             else
             {
-                // 대상이 유닛이 아니라 기지인 경우
-                GameObject obj = nearest.gameObject;
-                EnemyBase baseScript = obj.GetComponent<EnemyBase>();
-                if (baseScript == null)
-                    baseScript = obj.GetComponentInParent<EnemyBase>();
-                if (baseScript != null)
-                    baseScript.TakeDamage(damage);
-                else
+                // 기지일 때는 enemyBaseTag로 구분된 태그에 맞춰 데미지 호출
+                var go = nearest.gameObject;
+                if (go.CompareTag(enemyBaseTag))
                 {
-                    PlayerBase playerBaseScript = obj.GetComponent<PlayerBase>();
-                    if (playerBaseScript == null)
-                        playerBaseScript = obj.GetComponentInParent<PlayerBase>();
-                    if (playerBaseScript != null)
-                        playerBaseScript.TakeDamage(damage);
+                    var pb = go.GetComponent<PlayerBase>()
+                             ?? go.GetComponentInParent<PlayerBase>();
+                    var eb = go.GetComponent<EnemyBase>()
+                             ?? go.GetComponentInParent<EnemyBase>();
+                    if (pb != null) pb.TakeDamage(damage);
+                    if (eb != null) eb.TakeDamage(damage);
                 }
             }
 
             if (attackClip != null && audioSource != null)
                 audioSource.PlayOneShot(attackClip);
         }
-
         lastAttackTime = Time.time;
     }
+    #endregion
 
-    // 상성 배수 계산: 기획서에 따라 공격자가 특정 타입이면 1.2배 데미지 적용
     protected float GetAdvantageMultiplier(BaseUnit target)
     {
         // 예시 규칙:
-        // 보병(Infantry)은 궁병(Archer)에 대해 1.2배, 
-        // 궁병(Archer)은 기병(Cavalry)에 대해 1.2배, 
-        // 기병(Cavalry)은 보병(Infantry)에 대해 1.2배
+        // Infantry(보병) → Archer(궁병)에 대해 1.2배
+        // Archer(궁병) → Cavalry(기병)에 대해 1.2배
+        // Cavalry(기병) → Infantry(보병)에 대해 1.2배
         if (unitType == UnitType.Infantry && target.unitType == UnitType.Archer)
             return 1.2f;
         else if (unitType == UnitType.Archer && target.unitType == UnitType.Cavalry)
@@ -197,7 +260,6 @@ public class BaseUnit : MonoBehaviour
             return 1.2f;
         return 1f;
     }
-    #endregion
 
     // 디버깅용 사거리 시각화
     void OnDrawGizmosSelected()

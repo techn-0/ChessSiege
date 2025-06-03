@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6753608280682398035}
   - component: {fileID: 180546803976783512}
   - component: {fileID: 5425470635968728488}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: E_Pawn
   m_TagString: EnemyUnit
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7566ec03f2affad47a236eb564c9c067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minionName: Minion
+  minionName: Pawn
   costGold: 100
   costWood: 50
   costFood: 0
@@ -187,8 +187,5 @@ MonoBehaviour:
   attackRange: 1
   damage: 30
   unitType: 0
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
   enemyBaseTag: PlayerBase
   attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}

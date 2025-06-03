@@ -69,13 +69,11 @@ public class EnemyUnitSpawnManager : MonoBehaviour
         GameObject newEnemy = Instantiate(prefab, enemyBaseSpawnPoint.position, Quaternion.identity);
         newEnemy.name = prefab.name; // "(Clone)" 접미사 제거
 
-        // (4) 레이어 및 공격 대상 설정
-        newEnemy.layer = LayerMask.NameToLayer("EnemyUnit");
+        // (4) 태그 기반으로 공격 대상 설정
         BaseUnit baseUnitComp = newEnemy.GetComponent<BaseUnit>();
         if (baseUnitComp != null)
         {
-            // 공격 대상은 "PlayerUnit" 레이어와 "PlayerBase" 태그를 가진 오브젝트로 설정
-            baseUnitComp.enemyLayerMask = LayerMask.GetMask("PlayerUnit");
+            // 공격 대상은 "PlayerBase" 태그를 가진 오브젝트로 설정
             baseUnitComp.enemyBaseTag = "PlayerBase";
         }
 
