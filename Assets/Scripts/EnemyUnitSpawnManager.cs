@@ -58,12 +58,11 @@ public class EnemyUnitSpawnManager : MonoBehaviour
             return;
         }
 
-        // (2) 적 자원 체크 (업데이트된 기획서에 따라 세 가지 자원 비용 소비)
-        bool canSpend = GameManager.Instance.TrySpendEnemyResources(
-                                unitInfo.costGold, unitInfo.costWood, unitInfo.costFood);
+        // (2) 적 자원 체크 (골드만 사용)
+        bool canSpend = GameManager.Instance.TrySpendEnemyResources(unitInfo.costGold, 0, 0);
         if (!canSpend)
         {
-            Debug.Log("적 자원 부족");
+            Debug.Log("적 골드 부족");
             return;
         }
 

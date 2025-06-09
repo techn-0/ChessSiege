@@ -179,13 +179,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minionName: Kight
   costGold: 200
-  costWood: 100
-  costFood: 50
-  spawnCooldown: 10
-  attackCooldown: 3
+  spawnCooldown: 4
+  attackCooldown: 0.8
   maxHealth: 300
   currentHealth: 0
-  moveSpeed: 3.5
+  moveSpeed: 3
   attackRange: 1
   damage: 40
   unitType: 2

@@ -20,15 +20,15 @@ public class BaseUnit : MonoBehaviour
     [Header("------ 미니언 정보(Minion Info) ------")]
     public string minionName = "Minion";
     public int costGold = 1;
-    public int costWood = 1;
-    public int costFood = 1;
+    //public int costWood = 1; // 골드만 사용하므로 주석 처리
+    //public int costFood = 1; // 골드만 사용하므로 주석 처리
     public float spawnCooldown = 1.0f;
     public float attackCooldown = 1.0f;
 
     [Header("------ 유닛 속성(Attributes) ------")]
     public int maxHealth = 100;
     [SerializeField] private int currentHealth;
-    public float moveSpeed = 2f;
+    public float moveSpeed = 2.5f;
     public float attackRange = 1.5f;
     public int damage = 10;
     public UnitType unitType;
@@ -131,6 +131,15 @@ public class BaseUnit : MonoBehaviour
 
     protected virtual void Die()
     {
+        int reward = Mathf.FloorToInt(costGold * 0.2f);
+
+        // 플레이어 유닛이 죽으면 적에게 보상
+        if (CompareTag("PlayerUnit"))
+            GameManager.Instance.TryAddEnemyGold(reward);
+        // 적 유닛이 죽으면 플레이어에게 보상
+        else if (CompareTag("EnemyUnit"))
+            GameManager.Instance.TryAddPlayerGold(reward);
+
         Destroy(gameObject);
     }
 

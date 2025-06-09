@@ -178,14 +178,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minionName: Bisghop
-  costGold: 150
-  costWood: 80
-  costFood: 10
-  spawnCooldown: 15
-  attackCooldown: 5
+  costGold: 160
+  spawnCooldown: 3
+  attackCooldown: 1
   maxHealth: 120
   currentHealth: 0
-  moveSpeed: 2.2
+  moveSpeed: 2.5
   attackRange: 5
   damage: 25
   unitType: 1

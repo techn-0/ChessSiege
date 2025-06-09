@@ -11,10 +11,8 @@ public class PlayerMoneyUI : MonoBehaviour
     {
         if (moneyText != null && GameManager.Instance != null)
         {
-            moneyText.text = string.Format("골드: {0}\n목재: {1}\n식량: {2}",
-                GameManager.Instance.PlayerGold,
-                GameManager.Instance.PlayerWood,
-                GameManager.Instance.PlayerFood);
+            moneyText.text = string.Format("골드: {0}",
+                GameManager.Instance.PlayerGold);
         }
     }
 }

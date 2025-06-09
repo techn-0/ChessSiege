@@ -76,10 +76,11 @@ public class MinionSpawnManager : MonoBehaviour
             return;
         }
 
-        bool canSpend = GameManager.Instance.TrySpendPlayerResources(unitInfo.costGold, unitInfo.costWood, unitInfo.costFood);
+        // 골드만 체크
+        bool canSpend = GameManager.Instance.TrySpendPlayerResources(unitInfo.costGold, 0, 0);
         if (!canSpend)
         {
-            Debug.Log("자원 부족");
+            Debug.Log("골드 부족");
             return;
         }
 

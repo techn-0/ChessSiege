@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class CooldownButtonUI : MonoBehaviour
 {
     [Header("UI Components")]
-    public Text costText;         // 유닛 비용 표시 (예: "골드: X 목재: Y 식량: Z")
+    public Text costText;         // 유닛 비용 표시 (예: "골드: X")
     public Image previewImage;    // 유닛 미리보기 이미지
     public Image cooldownDial;    // 쿨다운 다이얼 (Fill Method: Radial)
     public MinionSpawnManager spawnManager;
@@ -26,11 +26,10 @@ public class CooldownButtonUI : MonoBehaviour
                 unitInfo = prefab.GetComponent<BaseUnit>();
                 if (unitInfo != null)
                 {
-                    // 비용 정보 표기
+                    // 비용 정보 표기 (골드만)
                     if (costText != null)
                     {
-                        costText.text = string.Format("골드: {0}\n목재: {1}\n식량: {2}",
-                            unitInfo.costGold, unitInfo.costWood, unitInfo.costFood);
+                        costText.text = string.Format("골드: {0}", unitInfo.costGold);
                     }
                     // 미리보기 이미지 설정 (프리팹에 SpriteRenderer가 있을 경우)
                     SpriteRenderer sr = prefab.GetComponent<SpriteRenderer>();
