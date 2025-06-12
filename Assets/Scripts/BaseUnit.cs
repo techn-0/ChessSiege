@@ -311,11 +311,11 @@ public class BaseUnit : MonoBehaviour
     protected float GetAdvantageMultiplier(BaseUnit target)
     {
         if (unitType == UnitType.Infantry && target.unitType == UnitType.Archer)
-            return 1.2f;
+            return 1.5f;
         else if (unitType == UnitType.Archer && target.unitType == UnitType.Cavalry)
-            return 1.2f;
+            return 1.5f;
         else if (unitType == UnitType.Cavalry && target.unitType == UnitType.Infantry)
-            return 1.2f;
+            return 1.5f;
         return 1f;
     }
 

@@ -180,7 +180,7 @@ MonoBehaviour:
   minionName: Kight
   costGold: 200
   spawnCooldown: 4
-  attackCooldown: 0.8
+  attackCooldown: 1.5
   maxHealth: 300
   currentHealth: 0
   moveSpeed: 3
@@ -190,6 +190,8 @@ MonoBehaviour:
   isRanged: 0
   enemyBaseTag: PlayerBase
   attackClip: {fileID: 8300000, guid: a21124f3e0b50b447a073887ddfe04b0, type: 3}
+  projectilePrefab: {fileID: 0}
+  firePoint: {fileID: 0}
 --- !u!114 &7257036592820097774
 MonoBehaviour:
   m_ObjectHideFlags: 0

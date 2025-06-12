@@ -185,7 +185,7 @@ MonoBehaviour:
   currentHealth: 0
   moveSpeed: 2.5
   attackRange: 5
-  damage: 25
+  damage: 35
   unitType: 1
   isRanged: 1
   enemyBaseTag: PlayerBase
