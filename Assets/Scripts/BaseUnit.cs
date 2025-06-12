@@ -47,6 +47,10 @@ public class BaseUnit : MonoBehaviour
     public AudioClip attackClip;
     private AudioSource audioSource;
 
+    [Header("------ 원거리 전용 ------")]
+    public GameObject projectilePrefab; // Inspector에서 투사체 프리팹 할당
+    public Transform firePoint; // 발사 위치(없으면 transform 사용)
+
     protected virtual void Awake()
     {
         currentHealth = maxHealth;
@@ -251,6 +255,29 @@ public class BaseUnit : MonoBehaviour
 
         if (nearest != null)
         {
+            if (isRanged && projectilePrefab != null)
+            {
+                // 투사체 생성 위치와 방향 계산
+                Vector3 firePos = firePoint != null ? firePoint.position : transform.position;
+                Vector3 dir = (nearest.transform.position - firePos).normalized;
+
+                // 머리가 위(y+)를 향하는 프리팹에 맞는 각도 계산
+                float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
+                Quaternion rot = Quaternion.AngleAxis(-angle, Vector3.forward);
+
+                GameObject proj = Instantiate(projectilePrefab, firePos, rot);
+                Projectile projScript = proj.GetComponent<Projectile>();
+                if (projScript != null)
+                {
+                    projScript.damage = damage;
+                    projScript.target = nearest.transform;
+                }
+                if (attackClip != null && audioSource != null)
+                    audioSource.PlayOneShot(attackClip);
+                lastAttackTime = Time.time;
+                return;
+            }
+            // 이하 근접 유닛 처리(기존 코드)
             BaseUnit tu = nearest.GetComponent<BaseUnit>();
             if (tu != null)
             {
