@@ -7,10 +7,15 @@ public class TitleSceneController : MonoBehaviour
 
     public void OnStartGame()
     {
-        Debug.Log("OnStartGame 호출됨");
         SceneManager.LoadScene("Stage1");
     }
 
-    public void OnOpenInstructions()  => instructionsPanel.SetActive(true);
+    public void OnOpenInstructions() => instructionsPanel.SetActive(true);
     public void OnCloseInstructions() => instructionsPanel.SetActive(false);
+
+    // 메인(타이틀) 씬으로 돌아가기
+    public void OnReturnToMain()
+    {
+        SceneManager.LoadScene("Main Scene");
+    }
 }
