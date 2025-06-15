@@ -1,5 +1,8 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
+
+public enum GameResult { None, Win, Lose }
 
 /// <summary>
 /// 게임 전체를 관리하는 싱글톤 매니저.
@@ -49,6 +52,15 @@ public class GameManager : MonoBehaviour
     public int EnemyGold => enemyGold;
     //public int EnemyWood => enemyWood;
     //public int EnemyFood => enemyFood;
+
+    public GameResult result = GameResult.None;
+    public GameObject resultPanel; // 결과 패널
+    public Text resultText;        // 결과 텍스트
+    public Image resultImage;      // 결과 이미지 (Image 컴포넌트)
+    public Sprite winSprite;       // 승리 스프라이트
+    public Sprite loseSprite;      // 패배 스프라이트
+
+    private bool isGameOver = false;
 
     void Awake()
     {
@@ -153,6 +165,26 @@ public class GameManager : MonoBehaviour
     public void TryAddEnemyGold(int amount)
     {
         enemyGold = Mathf.Min(enemyGold + amount, enemyMaxGold);
+    }
+
+    // 게임 종료 처리
+    public void EndGame(bool playerWin)
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+
+        result = playerWin ? GameResult.Win : GameResult.Lose;
+
+        // 결과 UI 표시
+        if (resultPanel != null) resultPanel.SetActive(true);
+        if (resultText != null)
+            resultText.text = playerWin ? "승리!" : "패배!";
+
+        // 결과 이미지 스프라이트 변경
+        if (resultImage != null)
+            resultImage.sprite = playerWin ? winSprite : loseSprite;
+
+        Time.timeScale = 0f;
     }
 
     #endregion

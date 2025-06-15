@@ -35,6 +35,7 @@ public class PlayerBase : MonoBehaviour
 
     private void DestroyBase()
     {
+        GameManager.Instance.EndGame(false); // 플레이어 기지 파괴 → 패배
         Destroy(gameObject);
     }
 }
