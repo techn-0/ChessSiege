@@ -1,0 +1,12 @@
+# ninja log v5
+125	924	7716813456971339	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	53b5acd665f1fa69
+927	1204	7716813459595498	D:/ChessSiege/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/4b3u65x5/obj/arm64-v8a/libswappywrapper.so	921eeb2354e06998
+39	3971	7716813487389428	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	52625b32ccc0b823
+54	4067	7716813487727262	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	373e16ac88f2e5aa
+15	4118	7716813488062214	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	7151f9ce574601cb
+105	4121	7716813488676065	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	8894bdcf80ecfb84
+1	4274	7716813490350571	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	523b577c77045e8c
+85	4588	7716813493626336	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	f32d7b7d595a09d1
+69	4642	7716813494225486	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	fda403481e33cd2
+26	4778	7716813495433584	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	10c69c6eb1c1847
+4779	4936	7716813497183410	D:/ChessSiege/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/4b3u65x5/obj/arm64-v8a/libgame.so	aa2b922a37d3d816

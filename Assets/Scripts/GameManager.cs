@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public enum GameResult { None, Win, Lose }
 
@@ -62,6 +63,10 @@ public class GameManager : MonoBehaviour
 
     private bool isGameOver = false;
 
+    [Header("---- 사운드 ----")]
+    public AudioSource bgmSource;    // Inspector에서 BGM용 AudioSource 할당
+    public AudioClip bgmClip;        // Inspector에서 BGM AudioClip 할당
+
     void Awake()
     {
         // 싱글톤 패턴 설정
@@ -71,22 +76,46 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+
+        // DontDestroyOnLoad 제거 또는 아래 코드로 씬 전환 시 파괴
+        // DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
         // 초기 자원 값 세팅
         playerGold = playerStartingGold;
-        //playerWood = playerStartingWood;
-        //playerFood = playerStartingFood;
         enemyGold = enemyStartingGold;
-        //enemyWood = enemyStartingWood;
-        //enemyFood = enemyStartingFood;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 메인 씬(타이틀)으로 돌아갈 때 GameManager 파괴
+        if (scene.name == "MainScene")
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
     {
+        // 게임 시간 정상화
+        Time.timeScale = 1f;
+
         // 자원 회복 코루틴 시작
         StartCoroutine(RegenPlayerResources());
         StartCoroutine(RegenEnemyResources());
+
+        // 게임 시작 시 BGM 재생
+        if (bgmSource != null && bgmClip != null)
+        {
+            bgmSource.clip = bgmClip;
+            bgmSource.loop = true;
+            bgmSource.Play();
+        }
     }
 
     #region 자원 회복 Coroutine
