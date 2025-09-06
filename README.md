@@ -1,5 +1,5 @@
 ﻿# Chess Siege
-
+https://youtu.be/HRmko2l1RnI?si=Q9jC8d8IN5zYlUEo
 ## 1. 개요
 
 세 가지 기물(**폰 Pawn / 비숍 Bishop / 나이트 Knight**)만으로 전장을 밀어붙여 적 성채를 무너뜨리는 단일 레인 RTS
