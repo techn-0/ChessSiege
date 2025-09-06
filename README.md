@@ -1,7 +1,4 @@
 ﻿# Chess Siege
-https://youtu.be/HRmko2l1RnI?si=Q9jC8d8IN5zYlUEo
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/HRmko2l1RnI?si=Q9jC8d8IN5zYlUEo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## 데모 영상
 
