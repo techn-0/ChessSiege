@@ -36,4 +36,63 @@
 | --- |---------------------------------------------|
 | **유닛 업그레이드** (Unit Upgrade) | 폰 기지 도착 시 나이트로 승급• 비숍 공격에 넉백• 나이트 첫 접전 시 돌파 |
 | **건물 건설** (Buildable Structures) | 아군 통과, 적군은 파괴 필요• 바리케이드, 공성탑 등              |
-| **스테이지 추가** | 새로운 특성의 전장을 가진 스테이지 다수                      |
+
+---
+
+## 🛠 기술 스택
+
+- **Unity 2022.x LTS**
+- **C#**
+- **Unity Input System**
+- **ScriptableObject** (유닛/건물 데이터 관리)
+- **2D URP (Universal Render Pipeline)**
+- **Pixel Art Assets** (외부 에셋 활용)
+- **PlayerPrefs** (로컬 데이터 저장)
+
+---
+
+## 🏗️ 프로젝트 구조
+
+```
+Assets/
+  ├─ Scenes/           # 게임 씬
+  ├─ Scripts/          # C# 스크립트
+  ├─ Prefabs/          # 프리팹(유닛, 건물 등)
+  ├─ Sprites/          # 2D 스프라이트
+  ├─ Audio/            # 사운드 리소스
+  ├─ Fonts/            # 폰트
+  └─ Settings/         # 프로젝트 설정
+```
+
+---
+
+## 🚀 주요 시스템
+
+### ⚔️ 유닛 소환 및 전투 시스템
+- 유닛 소환 및 이동, 전투 처리
+- 유닛 상성(가위바위보) 및 피해량 계산
+- 쿨타임 기반 소환 UI
+
+### 🏰 성채 시스템
+- 성채 HP 관리 및 승리 조건 판정
+
+### 💰 자원 시스템
+- 골드 획득/소비 시스템
+
+### 🎮 UI
+- 플레이어 골드, 쿨타임 등 게임 정보 표시
+
+---
+
+## 📦 외부 에셋 및 라이브러리
+
+- 2D Pixel Art Platformer Biome - American Forest (배경/타일셋)
+- Cainos Pixel Art Assets (유닛/오브젝트)
+- 기타 무료 사운드/폰트 에셋
+
+---
+
+## 📝 개발 및 빌드
+
+- Unity 에디터에서 `Scenes/Main.unity` 실행
+- Windows 빌드 지원
