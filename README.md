@@ -1,5 +1,7 @@
 ﻿# Chess Siege
 
+ [BIC Festival 2025] 루키 지원작
+
 ## 데모 영상
 
 [![Chess Siege 데모 영상](https://img.youtube.com/vi/HRmko2l1RnI/0.jpg)](https://youtu.be/HRmko2l1RnI?si=Q9jC8d8IN5zYlUEo)
